@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Programa TRAZO · Promoción Interna · Coordinador de Marca · AMG</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --coral:#EB4751;--orange:#F98C53;--lav:#A3A7C6;--navy:#26283F;
+  --cream:#FAF9F7;--white:#FFFFFF;--g100:#F3F2EF;--g200:#E4E2DC;
+  --g400:#B0AEAD;--g500:#7A7A8A;--r:10px;
+  --mkt:#6366a0;--coord:#EB4751;--pulso:#2D8F6F;--pulso-light:#5ecaa8;
+}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--navy);font-size:14px;line-height:1.6}
+.modal-overlay{position:fixed;inset:0;background:rgba(20,20,35,.85);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal-box{background:var(--white);border-radius:16px;padding:40px;max-width:480px;width:90%;text-align:center}
+.modal-logo{font-family:'Playfair Display',serif;font-weight:800;font-size:2rem;color:var(--coral);margin-bottom:4px}
+.modal-logo span{color:var(--orange)}
+.modal-subtitle{font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--lav);margin-bottom:28px}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.modal-desc{font-size:.82rem;color:var(--g500);margin-bottom:28px;line-height:1.6}
+.role-buttons{display:flex;flex-direction:column;gap:12px}
+.role-btn{padding:14px 20px;border:2px solid var(--g200);border-radius:10px;cursor:pointer;text-align:left;background:var(--white);transition:all .2s}
+.role-btn:hover{border-color:var(--coral);background:rgba(235,71,81,.04)}
+.role-btn.selected{border-color:var(--coral);background:rgba(235,71,81,.06)}
+.role-btn-name{font-weight:700;font-size:.9rem;color:var(--navy)}
+.role-btn-desc{font-size:.75rem;color:var(--g500);margin-top:2px}
+.modal-confirm{margin-top:20px;background:var(--coral);color:var(--white);border:none;border-radius:8px;padding:12px 28px;font-size:.88rem;font-weight:700;cursor:pointer;width:100%}
+.modal-confirm:disabled{opacity:.4;cursor:not-allowed}
+.report-modal{position:fixed;inset:0;background:rgba(20,20,35,.85);z-index:900;display:flex;align-items:center;justify-content:center}
+.report-modal.hidden{display:none}
+.report-box{background:var(--white);border-radius:14px;padding:32px;max-width:520px;width:90%}
+.report-box h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:6px}
+.report-box p{font-size:.82rem;color:var(--g500);margin-bottom:18px}
+.report-box textarea{width:100%;border:1.5px solid var(--g200);border-radius:8px;padding:12px;font-size:.83rem;font-family:'Inter',sans-serif;resize:vertical;min-height:90px;color:var(--navy)}
+.report-box textarea:focus{outline:none;border-color:var(--coral)}
+.report-actions{display:flex;gap:10px;margin-top:14px}
+.btn-confirm-report{flex:1;background:var(--coral);color:var(--white);border:none;border-radius:8px;padding:10px;font-size:.85rem;font-weight:700;cursor:pointer}
+.btn-cancel-report{flex:0 0 80px;background:var(--g100);color:var(--g500);border:none;border-radius:8px;padding:10px;font-size:.85rem;cursor:pointer}
+.header{background:linear-gradient(135deg,var(--navy) 0%,#1a1c2e 55%,#2a1e38 100%);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-100px;right:-60px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(249,140,83,.16) 0%,transparent 70%)}
+.hdr-inner{max-width:940px;margin:0 auto;padding:40px 32px 36px;position:relative;z-index:1}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;flex-wrap:wrap;gap:14px}
+.logo{display:flex;align-items:baseline;gap:5px}
+.logo-amg{font-family:'Playfair Display',serif;font-weight:800;font-size:1.9rem;color:var(--coral)}
+.logo-dot{font-family:'Playfair Display',serif;font-weight:800;font-size:1.9rem;color:var(--orange)}
+.logo-grp{font-size:.75rem;font-weight:300;color:var(--lav);letter-spacing:2.5px;text-transform:uppercase;align-self:center}
+.role-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:100px;padding:7px 16px;cursor:pointer;transition:background .2s}
+.role-badge:hover{background:rgba(255,255,255,.15)}
+.role-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.role-name{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.85)}
+.role-change{font-size:.65rem;color:rgba(255,255,255,.4);margin-left:4px}
+.hdr-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange);background:rgba(249,140,83,.12);border:1px solid rgba(249,140,83,.3);display:inline-block;padding:4px 12px;border-radius:100px;margin-bottom:12px}
+.promo-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(163,167,198,.12);border:1px solid rgba(163,167,198,.25);padding:4px 12px;border-radius:100px;font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--lav);margin-left:8px}
+.hdr-title{font-family:'Playfair Display',serif;font-weight:700;font-size:2.2rem;color:var(--white);line-height:1.15;margin-bottom:6px}
+.hdr-title span{color:var(--coral)}
+.hdr-sub{font-size:.85rem;color:var(--lav);font-style:italic;margin-bottom:20px}
+.hdr-context{background:rgba(163,167,198,.1);border:1px solid rgba(163,167,198,.2);border-radius:8px;padding:12px 16px;margin-bottom:10px}
+.hdr-context-lbl{font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lav);margin-bottom:5px}
+.hdr-context p{font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.6}
+.hdr-context strong{color:rgba(255,255,255,.95)}
+.hdr-context-pulso{background:rgba(45,143,111,.12);border:1px solid rgba(45,143,111,.25);border-radius:8px;padding:12px 16px;margin-bottom:14px}
+.hdr-context-pulso-lbl{font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--pulso-light);margin-bottom:5px}
+.hdr-context-pulso p{font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.6}
+.hdr-context-pulso strong{color:rgba(255,255,255,.95)}
+.hdr-obj{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--coral);border-radius:0 8px 8px 0;padding:12px 18px;margin-bottom:24px}
+.hdr-obj-label{font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lav);margin-bottom:4px}
+.hdr-obj p{font-size:.85rem;color:rgba(255,255,255,.82);line-height:1.6}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:6px 14px;font-size:.74rem;color:rgba(255,255,255,.7);font-weight:500}
+.chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.chip.pulso-chip{background:rgba(45,143,111,.12);border-color:rgba(45,143,111,.3);color:var(--pulso-light)}
+.progress-bar-section{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08)}
+.progress-inner{max-width:940px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.progress-label{font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);flex-shrink:0}
+.progress-track{flex:1;min-width:120px;height:6px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--coral),var(--orange));border-radius:100px;transition:width .5s ease}
+.progress-pct{font-size:.82rem;font-weight:700;color:var(--orange);flex-shrink:0;min-width:36px;text-align:right}
+.tabs-bar{background:var(--white);border-bottom:1px solid var(--g200);position:sticky;top:0;z-index:50}
+.tabs-inner{max-width:940px;margin:0 auto;padding:0 32px;display:flex;gap:0}
+.tab-btn{padding:14px 20px;font-size:.78rem;font-weight:600;color:var(--g500);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--navy)}
+.tab-btn.active{color:var(--coral);border-bottom-color:var(--coral)}
+.tab-count{background:var(--g100);color:var(--g500);font-size:.62rem;font-weight:700;padding:2px 6px;border-radius:100px;margin-left:5px}
+.tab-btn.active .tab-count{background:rgba(235,71,81,.12);color:var(--coral)}
+.main{max-width:940px;margin:0 auto;padding:36px 32px 64px}
+.tab-section{display:none}
+.tab-section.active{display:block}
+.sec-hdr{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.sec-acc{width:4px;height:32px;background:linear-gradient(180deg,var(--coral),var(--orange));border-radius:4px;flex-shrink:0}
+.sec-num{font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lav)}
+.sec-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.35rem;color:var(--navy)}
+.insight-banner{background:linear-gradient(135deg,rgba(99,102,160,.08),rgba(163,167,198,.06));border:1.5px solid rgba(99,102,160,.2);border-radius:var(--r);padding:20px 24px;margin-bottom:14px}
+.insight-banner-lbl{font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mkt);margin-bottom:8px}
+.insight-banner p{font-size:.84rem;color:var(--navy);line-height:1.65}
+.insight-banner strong{font-weight:700;color:var(--coral)}
+.pulso-banner{background:linear-gradient(135deg,rgba(45,143,111,.07),rgba(94,202,168,.04));border:1.5px solid rgba(45,143,111,.2);border-radius:var(--r);padding:20px 24px;margin-bottom:28px}
+.pulso-banner-lbl{font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--pulso);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.pulso-banner p{font-size:.84rem;color:var(--navy);line-height:1.65}
+.pulso-banner strong{font-weight:700;color:var(--pulso)}
+.timeline-wrap{background:var(--white);border:1.5px solid var(--g200);border-radius:var(--r);padding:24px 28px;margin-bottom:32px;overflow-x:auto}
+.timeline{display:flex;align-items:flex-start;gap:0;min-width:560px;position:relative}
+.timeline::before{content:'';position:absolute;top:19px;left:20px;right:20px;height:2px;background:linear-gradient(90deg,var(--lav),var(--orange),var(--coral),var(--navy));z-index:0}
+.tl-item{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
+.tl-node{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--white);margin-bottom:8px;flex-shrink:0;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.tl-node.milestone{box-shadow:0 0 0 4px var(--cream),0 4px 12px rgba(235,71,81,.3)}
+.tl-label{font-size:.68rem;font-weight:700;color:var(--navy)}
+.tl-sub{font-size:.6rem;color:var(--g500)}
+.tl-status{font-size:.58rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:2px}
+.tl-status.done{color:var(--orange)}
+.tl-status.active{color:var(--coral)}
+.tl-status.pending{color:var(--g400)}
+.phase-card{background:var(--white);border:1.5px solid var(--g200);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.phase-hdr{display:flex;align-items:center;gap:14px;padding:18px 22px;cursor:pointer;user-select:none;transition:background .15s}
+.phase-hdr:hover{background:var(--g100)}
+.phase-num{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--white);flex-shrink:0}
+.phase-meta{flex:1}
+.phase-tag{font-size:.58rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-bottom:3px;display:inline-block}
+.phase-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--navy)}
+.phase-dur{font-size:.72rem;color:var(--g500);margin-top:1px}
+.phase-progress-wrap{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.phase-pct-label{font-size:.72rem;font-weight:700;color:var(--g500)}
+.mini-track{width:60px;height:5px;background:var(--g200);border-radius:100px;overflow:hidden}
+.mini-fill{height:100%;background:linear-gradient(90deg,var(--coral),var(--orange));border-radius:100px;transition:width .4s}
+.toggle-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--g100);font-size:.7rem;transition:transform .3s;flex-shrink:0}
+.phase-card.open .toggle-icon{transform:rotate(180deg)}
+.phase-body{display:none;padding:0 22px 22px;border-top:1px solid var(--g200)}
+.phase-card.open .phase-body{display:block}
+.phase-obj{background:var(--g100);border-radius:8px;padding:12px 14px;margin:16px 0;border-left:3px solid var(--coral)}
+.phase-obj-lbl{font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--coral);margin-bottom:4px}
+.phase-obj-txt{font-size:.83rem;color:var(--navy);font-weight:500;line-height:1.55}
+.phase-new-tag{background:rgba(235,71,81,.1);color:var(--coral);font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:5px;display:inline-block;margin-bottom:12px}
+.task-section-lbl{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lav);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.task-section-lbl::after{content:'';flex:1;height:1px;background:var(--g200)}
+.task-section-lbl.leader{color:var(--pulso)}
+.task-section-lbl.leader::after{background:rgba(45,143,111,.2)}
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:7px;transition:background .15s;cursor:pointer;margin-bottom:3px}
+.task-item:hover{background:var(--g100)}
+.task-item.checked{opacity:.65}
+.task-item.checked .task-text{text-decoration:line-through;color:var(--g500)}
+.cb-wrap{flex-shrink:0;margin-top:2px}
+.cb{width:18px;height:18px;border:2px solid var(--g400);border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all .15s;background:var(--white)}
+.cb.checked{background:var(--coral);border-color:var(--coral)}
+.cb.leader-cb{border-color:var(--pulso)}
+.cb.leader-cb.checked{background:var(--pulso);border-color:var(--pulso)}
+.cb-check{color:var(--white);font-size:.65rem;opacity:0}
+.cb.checked .cb-check{opacity:1}
+.task-text{font-size:.82rem;color:var(--navy);line-height:1.5;flex:1}
+.task-text strong{font-weight:600}
+.task-resp{font-size:.58rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:2px 7px;border-radius:100px;flex-shrink:0;margin-top:2px}
+.resp-coord{background:rgba(235,71,81,.1);color:var(--coral)}
+.resp-mkt{background:rgba(99,102,160,.12);color:var(--mkt)}
+.resp-all{background:rgba(38,40,63,.08);color:var(--navy)}
+.task-item.deliverable{background:rgba(249,140,83,.04);border:1px solid rgba(249,140,83,.2)}
+.task-item.deliverable:hover{background:rgba(249,140,83,.08)}
+.task-item.deliverable .cb{border-color:var(--orange)}
+.task-item.deliverable .cb.checked{background:var(--orange);border-color:var(--orange)}
+.task-item.leader-task{background:rgba(45,143,111,.04);border:1px solid rgba(45,143,111,.15)}
+.task-item.leader-task:hover{background:rgba(45,143,111,.08)}
+.phase-complete-btn{width:100%;margin-top:16px;background:linear-gradient(90deg,var(--coral),var(--orange));color:var(--white);border:none;border-radius:8px;padding:12px;font-size:.85rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.phase-complete-btn:hover{opacity:.9}
+.phase-complete-btn.visible{display:block}
+.phase-done-badge{background:rgba(249,140,83,.1);border:1px solid rgba(249,140,83,.3);border-radius:8px;padding:10px 14px;margin-top:14px;display:none;align-items:center;gap:10px}
+.phase-done-badge.visible{display:flex}
+.phase-done-badge-text{font-size:.8rem;color:#c9601a;font-weight:500}
+.phase-done-badge-text strong{font-weight:700}
+.milestone-card{background:var(--white);border:1.5px solid var(--g200);border-radius:var(--r);padding:22px 24px;margin-bottom:14px;position:relative;overflow:hidden}
+.milestone-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.h1-card::before{background:linear-gradient(90deg,var(--lav),#7a7fc0)}
+.h2-card::before{background:linear-gradient(90deg,var(--orange),#f0ab6a)}
+.h3-card::before{background:linear-gradient(90deg,var(--coral),var(--orange))}
+.ms-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.ms-day{background:var(--navy);color:var(--white);font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;width:64px;height:64px;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+.ms-day span{font-size:.5rem;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--lav);margin-top:3px}
+.ms-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy)}
+.ms-sub{font-size:.76rem;color:var(--g500);margin-top:2px}
+.report-card{background:var(--white);border:1.5px solid var(--g200);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}
+.report-card-empty{text-align:center;padding:40px;color:var(--g400)}
+.report-card-empty .icon{font-size:2.5rem;margin-bottom:12px}
+.report-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.report-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--navy)}
+.report-meta{font-size:.72rem;color:var(--g500);margin-top:3px}
+.report-badge{font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:100px;flex-shrink:0}
+.badge-coord{background:rgba(235,71,81,.1);color:var(--coral)}
+.badge-mkt{background:rgba(99,102,160,.12);color:var(--mkt)}
+.badge-victor{background:rgba(38,40,63,.08);color:var(--navy)}
+.report-notes{background:var(--g100);border-radius:7px;padding:12px 14px;font-size:.82rem;color:var(--navy);line-height:1.6;margin-top:10px}
+.log-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--g200)}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.log-text{font-size:.8rem;color:var(--navy);line-height:1.5;flex:1}
+.log-text span{color:var(--g500);font-size:.74rem}
+.log-empty{font-size:.83rem;color:var(--g400);text-align:center;padding:24px}
+.alerts-section{background:#fff9f0;border:2px solid #f5c67a;border-radius:var(--r);padding:24px}
+.alerts-hdr{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.alert-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#7c4f0a}
+.alert-item{background:var(--white);border:1px solid #f5c67a;border-left:4px solid #E8A020;border-radius:8px;padding:14px 16px;margin-bottom:10px}
+.alert-item:last-child{margin-bottom:0}
+.alert-lbl{font-size:.58rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#E8A020;margin-bottom:5px}
+.alert-txt{font-size:.8rem;color:#4a3010;line-height:1.6}
+.alert-txt strong{font-weight:700}
+footer{background:var(--navy);padding:28px 32px 24px}
+.footer-inner{max-width:940px;margin:0 auto}
+.palette-lbl{font-size:.6rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:12px}
+.palette-strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.swatch{display:flex;flex-direction:column;align-items:center;gap:6px}
+.sw-color{width:44px;height:44px;border-radius:7px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.sw-hex{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.7);font-family:'Courier New',monospace}
+.sw-name{font-size:.55rem;color:rgba(255,255,255,.3)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-txt{font-size:.7rem;color:rgba(255,255,255,.25)}
+.footer-logo{font-family:'Playfair Display',serif;font-weight:800;font-size:.95rem;color:rgba(255,255,255,.12)}
+.footer-logo span{color:rgba(249,140,83,.3)}
+@media(max-width:640px){.hdr-inner,.tabs-inner,.main,footer{padding-left:16px;padding-right:16px}.hdr-title{font-size:1.7rem}}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="roleModal">
+  <div class="modal-box">
+    <div class="modal-logo">amg<span>.</span></div>
+    <div class="modal-subtitle">Programa TRAZO · Coordinador de Marca</div>
+    <div class="modal-title">¿Quién eres?</div>
+    <p class="modal-desc">Selecciona tu rol para personalizar tu vista. Puedes cambiarlo desde el encabezado en cualquier momento.</p>
+    <div class="role-buttons">
+      <div class="role-btn" onclick="selectRole('victor')" id="role-btn-victor"><div class="role-btn-name">🔒 Victor — Administrador</div><div class="role-btn-desc">Vista completa. Aprobación de fases, hitos y reportes.</div></div>
+      <div class="role-btn" onclick="selectRole('mkt')" id="role-btn-mkt"><div class="role-btn-name">📊 Gerente de Marketing</div><div class="role-btn-desc">Revisión y aprobación de entregables. Seguimiento del programa.</div></div>
+      <div class="role-btn" onclick="selectRole('coord')" id="role-btn-coord"><div class="role-btn-name">🎨 Coordinadora de Marca (Pamela)</div><div class="role-btn-desc">Ejecución del programa de transición y liderazgo del Auxiliar.</div></div>
+    </div>
+    <button class="modal-confirm" id="modalConfirmBtn" onclick="confirmRole()" disabled>Entrar al programa</button>
+  </div>
+</div>
+
+<div class="report-modal hidden" id="reportModal">
+  <div class="report-box">
+    <h3 id="reportModalTitle">Marcar etapa como completada</h3>
+    <p>Agrega notas de cierre. Quedará registrado con tu nombre y la fecha.</p>
+    <textarea id="reportNotes" placeholder="Notas, observaciones, próximos pasos... (opcional)"></textarea>
+    <div class="report-actions">
+      <button class="btn-confirm-report" onclick="confirmReport()">Confirmar y guardar</button>
+      <button class="btn-cancel-report" onclick="closeReportModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="hdr-inner">
+    <div class="hdr-top">
+      <div class="logo"><span class="logo-amg">amg</span><span class="logo-dot">.</span><span class="logo-grp">Hospitality Group</span></div>
+      <div class="role-badge" onclick="openRoleModal()"><div class="role-dot" id="hdrRoleDot"></div><span class="role-name" id="hdrRoleName">—</span><span class="role-change">cambiar</span></div>
+    </div>
+    <div><span class="hdr-eyebrow">Programa de Transición · 2026</span><span class="promo-badge">↑ Promoción Interna</span></div>
+    <h1 class="hdr-title" style="margin-top:8px">Programa <span>TRAZO</span></h1>
+    <p class="hdr-sub">Onboarding de transición — De Community Manager a Coordinación de Marca · AMG Hospitality Group</p>
+    <div class="hdr-context">
+      <div class="hdr-context-lbl">Contexto de partida</div>
+      <p>Pamela tiene <strong>6 años en AMG como Community Manager</strong> — conoce todas las marcas, los procesos, el equipo y las herramientas. <strong>No necesita aprender qué hace AMG. Necesita aprender qué hace un Coordinador de Marca</strong> que no hacía como CM: planear estrategia, escribir briefs, gestionar presupuesto, coordinar Paid Media y presentar análisis propios.</p>
+    </div>
+    <div class="hdr-context-pulso">
+      <div class="hdr-context-pulso-lbl">🌱 Nuevo — Lidera el Programa PULSO en paralelo</div>
+      <p>Simultáneamente a su propia transición, Pamela <strong>recibe a un Auxiliar de Marketing que ella debe guiar a través de su onboarding de 60 días (Programa PULSO)</strong>. Esto no es solo una responsabilidad adicional: <strong>su capacidad para delegar el operativo al Auxiliar es la evidencia más clara de que su transición a Coordinadora está funcionando.</strong> Si no puede soltar el trabajo de CM, no avanza en TRAZO y el Auxiliar no tiene a quién seguir.</p>
+    </div>
+    <div class="hdr-obj">
+      <div class="hdr-obj-label">Objetivo central del programa</div>
+      <p>En 60 días habrá completado la transición real y guiado al Auxiliar a través de su primer mes de operación supervisada. En 90 días presentará el plan Q+1, documentará el proceso del área y habrá realizado la evaluación formal del Auxiliar — primera evaluación que hace como líder.</p>
+    </div>
+    <div class="hdr-chips">
+      <div class="chip"><span class="dot" style="background:var(--orange)"></span>90 días · 4 fases</div>
+      <div class="chip"><span class="dot" style="background:var(--coral)"></span>Transición de rol, no inducción de empresa</div>
+      <div class="chip pulso-chip"><span class="dot" style="background:var(--pulso-light)"></span>🌱 Lidera el Programa PULSO</div>
+      <div class="chip"><span class="dot" style="background:rgba(255,255,255,.5)"></span>Reporta a: Gestión de Marketing</div>
+    </div>
+  </div>
+</header>
+
+<div class="progress-bar-section">
+  <div class="progress-inner">
+    <span class="progress-label">Avance global</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="switchTab('programa',this)">Programa <span class="tab-count" id="cnt-programa">0/0</span></button>
+    <button class="tab-btn" onclick="switchTab('reportes',this)">Reportes <span class="tab-count" id="cnt-reportes">0</span></button>
+    <button class="tab-btn" onclick="switchTab('bitacora',this)">Bitácora <span class="tab-count" id="cnt-bitacora">0</span></button>
+    <button class="tab-btn" onclick="switchTab('alertas',this)">Alertas</button>
+  </div>
+</div>
+
+<main class="main">
+<div class="tab-section active" id="tab-programa">
+
+  <div class="insight-banner">
+    <div class="insight-banner-lbl">Por qué este programa es diferente</div>
+    <p>Una promoción interna tiene ventajas enormes — y un riesgo específico: <strong>regresar al rol anterior cuando el nuevo es difícil.</strong> La curva de aprendizaje no está en conocer AMG. Está en dejar de hacer lo que salía natural (ejecutar contenido) para hacer lo nuevo (dirigir estrategia, delegar y decidir). Este programa está diseñado para acelerar esa transición.</p>
+  </div>
+  <div class="pulso-banner">
+    <div class="pulso-banner-lbl">🌱 Conexión con el Programa PULSO</div>
+    <p>Las tareas en <strong style="color:var(--pulso)">verde</strong> dentro de cada fase corresponden al liderazgo del Programa PULSO del Auxiliar. Estos dos programas corren en paralelo: el avance de Pamela como Coordinadora y el avance del Auxiliar son <strong>interdependientes</strong> — si el Auxiliar cubre el operativo, Pamela puede enfocarse en lo estratégico. Si no, ambos programas se frenan.</p>
+  </div>
+
+  <div class="timeline-wrap">
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lav);margin-bottom:16px">Línea de tiempo · 90 días</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-node" style="background:var(--lav)" id="tln-f1">F1</div><div class="tl-label">Transición</div><div class="tl-sub">Días 1–15</div><div class="tl-status pending" id="tls-f1">pendiente</div></div>
+      <div class="tl-item"><div class="tl-node milestone" style="background:var(--lav)" id="tln-h1">H1</div><div class="tl-label">Hito 1</div><div class="tl-sub">Día 15</div><div class="tl-status pending" id="tls-h1">pendiente</div></div>
+      <div class="tl-item"><div class="tl-node" style="background:var(--orange)" id="tln-f2">F2</div><div class="tl-label">Nuevas Habilidades</div><div class="tl-sub">Días 16–45</div><div class="tl-status pending" id="tls-f2">pendiente</div></div>
+      <div class="tl-item"><div class="tl-node milestone" style="background:var(--orange)" id="tln-h2">H2</div><div class="tl-label">Hito 2</div><div class="tl-sub">Día 30</div><div class="tl-status pending" id="tls-h2">pendiente</div></div>
+      <div class="tl-item"><div class="tl-node" style="background:var(--coral)" id="tln-f3">F3</div><div class="tl-label">Propiedad</div><div class="tl-sub">Días 46–60</div><div class="tl-status pending" id="tls-f3">pendiente</div></div>
+      <div class="tl-item"><div class="tl-node milestone" style="background:var(--coral)" id="tln-h3">H3</div><div class="tl-label">Hito 3</div><div class="tl-sub">Día 60</div><div class="tl-status pending" id="tls-h3">pendiente</div></div>
+      <div class="tl-item"><div class="tl-node" style="background:var(--navy)" id="tln-f4">F4</div><div class="tl-label">Consolidación</div><div class="tl-sub">Días 61–90</div><div class="tl-status pending" id="tls-f4">pendiente</div></div>
+    </div>
+  </div>
+
+  <div class="sec-hdr"><div class="sec-acc"></div><div><div class="sec-num">Fases del programa</div><h2 class="sec-title">Seguimiento de actividades y entregables</h2></div></div>
+
+  <!-- FASE 1 -->
+  <div class="phase-card open" id="card-f1">
+    <div class="phase-hdr" onclick="togglePhase('f1')">
+      <div class="phase-num" style="background:var(--lav)">1</div>
+      <div class="phase-meta">
+        <span class="phase-tag" style="background:rgba(163,167,198,.15);color:#6366a0">Días 1–15</span>
+        <div class="phase-title">Transición — Del hacer al dirigir</div>
+        <div class="phase-dur">2 semanas · Hacer oficial el cambio, definir KPIs y establecer la nueva dinámica con el equipo</div>
+      </div>
+      <div class="phase-progress-wrap"><span class="phase-pct-label" id="pct-f1">0%</span><div class="mini-track"><div class="mini-fill" id="fill-f1" style="width:0%"></div></div></div>
+      <div class="toggle-icon">▾</div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-obj"><div class="phase-obj-lbl">Objetivo</div><p class="phase-obj-txt">Que el cambio de rol sea real y percibido por todos — incluida ella misma. KPIs acordados, lista de lo que deja de hacer, nueva dinámica con el equipo establecida. Y en paralelo: el Auxiliar ingresa con todo listo para empezar.</p></div>
+      <div class="task-section-lbl">Actividades de transición</div>
+      <div id="tasks-f1"></div>
+      <div class="task-section-lbl">Entregables</div>
+      <div id="deliverables-f1"></div>
+      <div class="task-section-lbl leader">🌱 Lidera el Programa PULSO — Fase de orientación del Auxiliar</div>
+      <div id="leadership-f1"></div>
+      <button class="phase-complete-btn" id="complete-btn-f1" onclick="openReportModal('f1','Fase 1 — Transición')">✓ Marcar Fase 1 como completada</button>
+      <div class="phase-done-badge" id="done-badge-f1"><span>🏁</span><span class="phase-done-badge-text"><strong id="done-text-f1"></strong></span></div>
+    </div>
+  </div>
+
+  <!-- HITO 1 -->
+  <div class="milestone-card h1-card" id="card-h1">
+    <div class="ms-top"><div class="ms-day">15<span>Día</span></div><div><div class="ms-title">Hito 1 — ¿Cambio de Rol Consumado?</div><div class="ms-sub">La pregunta no es si ya sabe las marcas. Es si ya dejó de ser CM — y si el Auxiliar tiene todo para operar.</div></div></div>
+    <div id="tasks-h1"></div>
+    <button class="phase-complete-btn" id="complete-btn-h1" onclick="openReportModal('h1','Hito 1 — Cambio de Rol')">✓ Marcar Hito 1 como completado</button>
+    <div class="phase-done-badge" id="done-badge-h1"><span>✅</span><span class="phase-done-badge-text"><strong id="done-text-h1"></strong></span></div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="phase-card" id="card-f2">
+    <div class="phase-hdr" onclick="togglePhase('f2')">
+      <div class="phase-num" style="background:var(--orange)">2</div>
+      <div class="phase-meta">
+        <span class="phase-tag" style="background:rgba(249,140,83,.15);color:#c9601a">Días 16–45</span>
+        <div class="phase-title">Nuevas Habilidades — Lo que el rol de CM no pedía</div>
+        <div class="phase-dur">4 semanas · Briefs, plan estratégico, presupuesto, Paid Media y primeras semanas supervisando al Auxiliar</div>
+      </div>
+      <div class="phase-progress-wrap"><span class="phase-pct-label" id="pct-f2">0%</span><div class="mini-track"><div class="mini-fill" id="fill-f2" style="width:0%"></div></div></div>
+      <div class="toggle-icon">▾</div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-obj"><div class="phase-obj-lbl">Objetivo</div><p class="phase-obj-txt">Dominar las habilidades realmente nuevas del puesto mientras el Auxiliar toma el operativo. Si el Auxiliar cubre comunidad y programación de contenido, ella puede concentrarse en briefs y estrategia. Si no, hay un problema en el sistema.</p></div>
+      <div class="phase-new-tag">⚡ Estas son las habilidades realmente nuevas en este rol</div>
+      <div class="task-section-lbl">Actividades de nuevas habilidades</div>
+      <div id="tasks-f2"></div>
+      <div class="task-section-lbl">Entregables</div>
+      <div id="deliverables-f2"></div>
+      <div class="task-section-lbl leader">🌱 Lidera el Programa PULSO — Operación guiada del Auxiliar</div>
+      <div id="leadership-f2"></div>
+      <button class="phase-complete-btn" id="complete-btn-f2" onclick="openReportModal('f2','Fase 2 — Nuevas Habilidades')" style="background:linear-gradient(90deg,var(--orange),#f0ab6a)">✓ Marcar Fase 2 como completada</button>
+      <div class="phase-done-badge" id="done-badge-f2"><span>🏁</span><span class="phase-done-badge-text"><strong id="done-text-f2"></strong></span></div>
+    </div>
+  </div>
+
+  <!-- HITO 2 -->
+  <div class="milestone-card h2-card" id="card-h2">
+    <div class="ms-top"><div class="ms-day" style="background:var(--orange)">30<span>Día</span></div><div><div class="ms-title">Hito 2 — Primeros Briefs y Plan Estratégico Evaluados</div><div class="ms-sub">¿Sus briefs tienen criterio estratégico? ¿El Auxiliar está tomando suficiente operativo para que ella se concentre?</div></div></div>
+    <div id="tasks-h2"></div>
+    <button class="phase-complete-btn" id="complete-btn-h2" onclick="openReportModal('h2','Hito 2 — Briefs y Plan Estratégico')" style="background:linear-gradient(90deg,var(--orange),#f0ab6a)">✓ Marcar Hito 2 como completado</button>
+    <div class="phase-done-badge" id="done-badge-h2"><span>✅</span><span class="phase-done-badge-text"><strong id="done-text-h2"></strong></span></div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="phase-card" id="card-f3">
+    <div class="phase-hdr" onclick="togglePhase('f3')">
+      <div class="phase-num" style="background:var(--coral)">3</div>
+      <div class="phase-meta">
+        <span class="phase-tag" style="background:rgba(235,71,81,.12);color:var(--coral)">Días 46–60</span>
+        <div class="phase-title">Propiedad Estratégica — Decisiones propias y primer reporte</div>
+        <div class="phase-dur">2 semanas · Primer reporte propio, primera campaña autónoma y evaluación del Auxiliar en día 30</div>
+      </div>
+      <div class="phase-progress-wrap"><span class="phase-pct-label" id="pct-f3">0%</span><div class="mini-track"><div class="mini-fill" id="fill-f3" style="width:0%"></div></div></div>
+      <div class="toggle-icon">▾</div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-obj"><div class="phase-obj-lbl">Objetivo</div><p class="phase-obj-txt">Producir el primer reporte estratégico real, conducir la evaluación formal del Auxiliar en día 30 del PULSO y verificar que la distribución operativo-estratégico entre ambas está funcionando.</p></div>
+      <div class="task-section-lbl">Actividades de propiedad estratégica</div>
+      <div id="tasks-f3"></div>
+      <div class="task-section-lbl">Entregables</div>
+      <div id="deliverables-f3"></div>
+      <div class="task-section-lbl leader">🌱 Lidera el Programa PULSO — Hito 2 y autonomía del Auxiliar</div>
+      <div id="leadership-f3"></div>
+      <button class="phase-complete-btn" id="complete-btn-f3" onclick="openReportModal('f3','Fase 3 — Propiedad Estratégica')">✓ Marcar Fase 3 como completada</button>
+      <div class="phase-done-badge" id="done-badge-f3"><span>🏁</span><span class="phase-done-badge-text"><strong id="done-text-f3"></strong></span></div>
+    </div>
+  </div>
+
+  <!-- HITO 3 -->
+  <div class="milestone-card h3-card" id="card-h3">
+    <div class="ms-top"><div class="ms-day" style="background:var(--coral)">60<span>Día</span></div><div><div class="ms-title">Hito 3 — Primer Reporte Estratégico Presentado y Defendido</div><div class="ms-sub">¿El reporte va más allá de los datos? ¿El Auxiliar opera con autonomía real? ¿La distribución de trabajo entre ambas funciona?</div></div></div>
+    <div id="tasks-h3"></div>
+    <button class="phase-complete-btn" id="complete-btn-h3" onclick="openReportModal('h3','Hito 3 — Reporte Estratégico Día 60')">✓ Marcar Hito 3 como completado</button>
+    <div class="phase-done-badge" id="done-badge-h3"><span>✅</span><span class="phase-done-badge-text"><strong id="done-text-h3"></strong></span></div>
+  </div>
+
+  <!-- FASE 4 -->
+  <div class="phase-card" id="card-f4">
+    <div class="phase-hdr" onclick="togglePhase('f4')">
+      <div class="phase-num" style="background:var(--navy)">4</div>
+      <div class="phase-meta">
+        <span class="phase-tag" style="background:rgba(38,40,63,.08);color:var(--navy)">Días 61–90</span>
+        <div class="phase-title">Consolidación — Su sello en el rol y evaluación final del Auxiliar</div>
+        <div class="phase-dur">4 semanas · Plan Q+1, proceso documentado y evaluación formal del Programa PULSO</div>
+      </div>
+      <div class="phase-progress-wrap"><span class="phase-pct-label" id="pct-f4">0%</span><div class="mini-track"><div class="mini-fill" id="fill-f4" style="width:0%"></div></div></div>
+      <div class="toggle-icon">▾</div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-obj"><div class="phase-obj-lbl">Objetivo</div><p class="phase-obj-txt">Operar con autonomía plena, presentar el plan Q+1, documentar el proceso del área — y conducir la evaluación de 60 días del Auxiliar. Al cerrar el Programa TRAZO, cierra también el Programa PULSO: primera evaluación que hace como líder de una persona a cargo.</p></div>
+      <div class="task-section-lbl">Actividades de consolidación</div>
+      <div id="tasks-f4"></div>
+      <div class="task-section-lbl">Entregables</div>
+      <div id="deliverables-f4"></div>
+      <div class="task-section-lbl leader">🌱 Lidera el Programa PULSO — Evaluación final del Auxiliar (Hito 3)</div>
+      <div id="leadership-f4"></div>
+      <button class="phase-complete-btn" id="complete-btn-f4" onclick="openReportModal('f4','Fase 4 — Consolidación')" style="background:linear-gradient(90deg,var(--navy),#3d3f6b)">✓ Completar el Programa TRAZO — Transición y liderazgo concluidos</button>
+      <div class="phase-done-badge" id="done-badge-f4"><span>🏆</span><span class="phase-done-badge-text"><strong id="done-text-f4"></strong></span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tab-section" id="tab-reportes">
+  <div class="sec-hdr"><div class="sec-acc"></div><div><div class="sec-num">02 · Reportes</div><h2 class="sec-title">Cierres de fase e hitos completados</h2></div></div>
+  <div id="reports-list"><div class="report-card report-card-empty"><div class="icon">📋</div><p>Aún no hay reportes.</p></div></div>
+</div>
+
+<div class="tab-section" id="tab-bitacora">
+  <div class="sec-hdr"><div class="sec-acc"></div><div><div class="sec-num">03 · Bitácora</div><h2 class="sec-title">Registro de actividad del programa</h2></div></div>
+  <div style="background:var(--white);border:1.5px solid var(--g200);border-radius:var(--r);padding:20px 24px"><div id="log-list"><div class="log-empty">La bitácora está vacía.</div></div></div>
+</div>
+
+<div class="tab-section" id="tab-alertas">
+  <div class="sec-hdr"><div class="sec-acc"></div><div><div class="sec-num">04 · Alertas</div><h2 class="sec-title">Riesgos de implementación</h2></div></div>
+  <div class="alerts-section">
+    <div class="alerts-hdr"><span style="font-size:1.3rem">⚠️</span><div><div class="alert-title">Alertas del programa — Promoción interna + Liderazgo simultáneo</div></div></div>
+    <div class="alert-item"><div class="alert-lbl">Crítico — Regresión al rol anterior</div><p class="alert-txt">El riesgo número uno: si Pamela sigue ejecutando tareas de CM porque el Auxiliar "todavía no puede" o porque "es más rápido hacerlo ella", ambos programas se frenan. <strong>Si en día 15 ella sigue publicando copy o respondiendo comentarios, el cambio de rol no ha ocurrido</strong> — ni el de ella ni el del Auxiliar.</p></div>
+    <div class="alert-item"><div class="alert-lbl">Crítico — Doble onboarding simultáneo es carga real</div><p class="alert-txt">Aprender un nuevo rol mientras simultáneamente se lidera el onboarding de otra persona es demandante. <strong>Los primeros 30 días Pamela tiene mayor carga que lo normal</strong> — está aprendiendo y enseñando al mismo tiempo. Victor y Gerencia de Marketing deben estar disponibles como apoyo durante este período, no solo como evaluadores.</p></div>
+    <div class="alert-item"><div class="alert-lbl">Operativa — Dinámica con personas que fueron sus pares</div><p class="alert-txt">Coordinará a personas (CM, diseñador) con quienes trabajó en el mismo nivel durante años. <strong>La transición de "compañera" a "quien define el brief y evalúa el trabajo" es incómoda para ambas partes.</strong> Gerencia de Marketing debe respaldarlo institucionalmente — no asumir que se resuelve solo.</p></div>
+    <div class="alert-item"><div class="alert-lbl">Liderazgo — La escritura de briefs es una habilidad que toma tiempo</div><p class="alert-txt">Recibir briefs por 6 años no es lo mismo que escribirlos. Los primeros briefs probablemente serán demasiado operativos. <strong>Los primeros dos ciclos requieren retroalimentación activa de Gerencia</strong> — no solo "aprobado" o "no aprobado", sino revisión del criterio estratégico.</p></div>
+    <div class="alert-item"><div class="alert-lbl">Estructural — KPIs del nuevo rol no están documentados</div><p class="alert-txt">El manual no especifica KPIs numéricos para el puesto. <strong>Sin KPIs acordados no hay forma de evaluar si la transición fue exitosa.</strong> Resolver en la sesión de alineación de Fase 1, antes del día 5.</p></div>
+    <div class="alert-item"><div class="alert-lbl">Presupuesto — Proceso de aprobación sin tiempos definidos</div><p class="alert-txt">El presupuesto requiere aprobación de Gerencia → Dirección → Finanzas. <strong>No hay tiempos de respuesta definidos.</strong> Para que pueda planear campañas con fechas reales, necesita saber cuántos días toma cada nivel de aprobación.</p></div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="palette-lbl">Paleta de marca · AMG Brandbook</div>
+    <div class="palette-strip">
+      <div class="swatch"><div class="sw-color" style="background:#EB4751"></div><div class="sw-hex">#EB4751</div><div class="sw-name">Coral Red</div></div>
+      <div class="swatch"><div class="sw-color" style="background:#F98C53"></div><div class="sw-hex">#F98C53</div><div class="sw-name">Orange</div></div>
+      <div class="swatch"><div class="sw-color" style="background:#A3A7C6"></div><div class="sw-hex">#A3A7C6</div><div class="sw-name">Lavender</div></div>
+      <div class="swatch"><div class="sw-color" style="background:#26283F"></div><div class="sw-hex">#26283F</div><div class="sw-name">Navy</div></div>
+      <div class="swatch"><div class="sw-color" style="background:#2D8F6F"></div><div class="sw-hex">#2D8F6F</div><div class="sw-name">Verde Pulso</div></div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-txt">AMG Hospitality Group · Programa TRAZO · Onboarding Coordinador de Marca · Promoción Interna · 2026</span>
+      <span class="footer-logo">amg<span>.</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const TASKS={
+  f1:[
+    {id:'f1_t1',text:'<strong>Sesión de alineación con Gerencia de Marketing</strong> — enfocada en el nuevo rol: qué espera la Gerencia en los primeros 30 y 60 días, qué significa "éxito" en este puesto, y cuál es la dinámica esperada entre Coordinadora y Auxiliar',resp:'all'},
+    {id:'f1_t2',text:'<strong>Documentar qué responsabilidades de CM deja de ejecutar</strong> — lista específica con fecha de transferencia. Sin esta lista la transición no es real.',resp:'all'},
+    {id:'f1_t3',text:'<strong>Conversación con el CM y diseñador</strong> sobre la nueva dinámica — no como presentación social sino como establecimiento de nuevo flujo: cómo llegan los briefs, quién aprueba qué, qué cambia',resp:'coord'},
+    {id:'f1_t4',text:'Revisión de las <strong>últimas 3 parrillas de contenido con ojo estratégico</strong> — ¿qué decisiones haría diferente como Coordinadora? ¿Qué piezas sobrarían? ¿Qué faltaría?',resp:'coord'},
+    {id:'f1_t5',text:'Revisión de los <strong>últimos briefs recibidos como CM</strong> — identificar qué información le hubiera sido más útil. Ese insight alimentará su propio estilo de briefing.',resp:'coord'},
+    {id:'f1_t6',text:'Revisión de los <strong>últimos reportes de Paid Media</strong> — ahora desde el rol que solicita, supervisa y analiza, no solo recibe',resp:'coord'},
+    {id:'f1_t7',text:'<strong>Definir KPIs personales del nuevo puesto</strong> junto con Gerencia — métricas concretas de su gestión como Coordinadora, distintas a sus KPIs como CM',resp:'all'},
+  ],
+  f1d:[
+    {id:'f1_d1',text:'<strong>Lista de transferencia de responsabilidades de CM</strong> — qué deja de hacer, quién absorbe qué y con qué fecha',resp:'all'},
+    {id:'f1_d2',text:'<strong>KPIs acordados como Coordinadora de Marca</strong> — métricas y metas concretas para los primeros 90 días, validadas por Gerencia',resp:'all'},
+  ],
+  f1l:[
+    {id:'l1_1',text:'<strong>Verificar que los documentos de tono de voz por marca existan y estén accesibles</strong> antes del día de ingreso del Auxiliar — si no existen, crearlos es prioritario. El Auxiliar no puede trabajar bien sin esto.',resp:'coord'},
+    {id:'l1_2',text:'<strong>Garantizar que todos los accesos del Auxiliar estén listos el día de su ingreso</strong> — Instagram, Facebook, TikTok, Google My Business, Asana, herramienta de parrilla. Esta gestión es de Pamela, no de Gerencia.',resp:'coord'},
+    {id:'l1_3',text:'<strong>Sesión formal de inducción con el Auxiliar</strong> (Día 1 o 2 de su ingreso) — visión del área, marcas asignadas, cómo van a trabajar juntas, qué espera del rol y cómo le gusta recibir actualizaciones',resp:'coord'},
+    {id:'l1_4',text:'<strong>Conversación honesta sobre el contexto compartido</strong>: "yo también estoy aprendiendo este rol nuevo — eso significa que podría no tener respuesta para todo de inmediato, pero sé cómo funciona esta área desde adentro."',resp:'coord'},
+    {id:'l1_5',text:'<strong>Definir qué tareas operativas le transfiere al Auxiliar desde la primera semana</strong> — comunidad, programación, proveedores. Estas son exactamente las tareas de CM que Pamela deja de hacer.',resp:'all'},
+  ],
+  h1:[
+    {id:'h1_t1',text:'Validación con Gerencia: <strong>¿ya dejó de ejecutar tareas de CM?</strong> ¿Hay alguna responsabilidad anterior que todavía carga sin transferir?',resp:'mkt'},
+    {id:'h1_t2',text:'Confirmación de que <strong>el CM y diseñador entienden la nueva dinámica</strong> — ¿hay ya un canal claro para recibir briefs de su parte?',resp:'all'},
+    {id:'h1_t3',text:'<strong>KPIs del nuevo rol documentados y acordados</strong>',resp:'all'},
+    {id:'h1_t4',text:'Verificación: <strong>¿el Auxiliar tiene todos los accesos operativos y ha pasado la primera semana supervisada?</strong>',resp:'all'},
+    {id:'h1_t5',text:'Identificación de los <strong>primeros 3 cambios que haría</strong> en la estrategia de contenido que como CM no podía hacer',resp:'coord'},
+  ],
+  f2:[
+    {id:'f2_t1',text:'<strong>Redacción del primer plan estratégico de marcas Mes 1</strong> — por marca: objetivo del mes, mensajes clave, acciones de contenido y pauta. No es un calendario: es la lógica detrás del calendario.',resp:'coord'},
+    {id:'f2_t2',text:'<strong>Escritura del primer brief formal</strong> — objetivo de marca, mensaje clave, formato, plataforma, tono, referencias visuales, fecha. No "hacer un post de tal cosa."',resp:'coord'},
+    {id:'f2_t3',text:'<strong>Escritura del segundo brief</strong> — con ajustes basados en la retroalimentación del primero',resp:'coord'},
+    {id:'f2_t4',text:'<strong>Escritura del tercer brief</strong> — para un formato diferente al primero',resp:'coord'},
+    {id:'f2_t5',text:'<strong>Primera sesión de revisión de piezas en nuevo rol</strong> — dar retroalimentación al CM y diseñador con argumentos de marca, no de gusto personal',resp:'coord'},
+    {id:'f2_t6',text:'<strong>Primer proceso de cotización y aprobación presupuestal</strong> — solicitar cotización, armar justificación y presentar a Gerencia',resp:'coord'},
+    {id:'f2_t7',text:'<strong>Redacción del primer brief para Paid Media</strong> — objetivo, audiencia, mensajes, formatos, fechas y presupuesto',resp:'coord'},
+    {id:'f2_t8',text:'<strong>Primera reunión de seguimiento de campaña con Paid Media</strong> — métricas, desviaciones, solicitud de ajustes con criterio propio',resp:'coord'},
+    {id:'f2_t9',text:'<strong>Primera revisión semanal con Gerencia en formato Coordinadora</strong> — resultados de la semana, decisiones tomadas y por qué, próximos pasos. No solo reporte de actividad.',resp:'all'},
+    {id:'f2_t10',text:'Revisión semanal semana 4 / semana 5 / semana 6',resp:'all'},
+  ],
+  f2d:[
+    {id:'f2_d1',text:'<strong>Plan Estratégico de Marcas Mes 1</strong> — por marca: objetivo, mensajes clave, acciones y pauta con justificación estratégica',resp:'coord'},
+    {id:'f2_d2',text:'<strong>3 briefs formales redactados y distribuidos</strong> — con evidencia del aprendizaje progresivo entre el primero y el tercero',resp:'coord'},
+    {id:'f2_d3',text:'<strong>Brief de Paid Media Mes 1</strong> — enviado formalmente al equipo de pauta',resp:'coord'},
+    {id:'f2_d4',text:'<strong>Registro de gasto Mes 1</strong> — por marca, categoría y monto',resp:'coord'},
+  ],
+  f2l:[
+    {id:'l2_1',text:'<strong>Conducir la prueba práctica de tono del Hito 1 del Auxiliar (día 15 del PULSO)</strong> — presentar 5 comentarios o mensajes reales de distintas marcas, evaluar respuestas del Auxiliar y dar retroalimentación estructurada: qué estuvo bien, qué cambiar y por qué',resp:'coord'},
+    {id:'l2_2',text:'<strong>Semanas 3 y 4: revisar respuestas de comunidad del Auxiliar al final del día</strong> — dar retroalimentación breve y directa. En semana 5: soltar y pasar a revisión semanal únicamente.',resp:'coord'},
+    {id:'l2_3',text:'<strong>Primera revisión semanal formal con el Auxiliar</strong> — formato: ¿qué fue bien? ¿qué fue difícil? ¿qué necesita? Sin micromanagement, con foco en desbloquear.',resp:'coord'},
+    {id:'l2_4',text:'<strong>Autopreguntar en semana 6 (día ~40)</strong>: ¿el Auxiliar está cubriendo suficiente operativo para que yo pueda concentrarme en trabajo estratégico? Si no, ¿cuál es el bloqueo específico?',resp:'coord'},
+    {id:'l2_5',text:'<strong>Verificar y transferir</strong>: ¿hay alguna tarea operativa que sigo haciendo yo misma que debería estar delegando? Nombrarla y transferirla.',resp:'coord'},
+  ],
+  h2:[
+    {id:'h2_t1',text:'Evaluación de Gerencia sobre <strong>calidad de los briefs</strong> — ¿tienen suficiente contexto estratégico? ¿El CM y diseñador pudieron producir con claridad?',resp:'mkt'},
+    {id:'h2_t2',text:'Revisión del <strong>plan estratégico de marcas</strong> — ¿el contenido del mes sirvió a los objetivos declarados?',resp:'all'},
+    {id:'h2_t3',text:'Evaluación del <strong>brief de Paid Media</strong> — ¿fue claro y completo?',resp:'all'},
+    {id:'h2_t4',text:'Revisión del <strong>proceso de aprobación presupuestal</strong> — ¿fue fluido?',resp:'all'},
+  ],
+  f3:[
+    {id:'f3_t1',text:'<strong>Plan Estratégico de Marcas Mes 2</strong> — con ajustes explícitos basados en resultados del mes anterior. Debe verse la evolución de criterio.',resp:'coord'},
+    {id:'f3_t2',text:'<strong>Segunda campaña de Paid Media</strong> — mayor autonomía en brief, audiencia, mensajes y presupuesto justificado',resp:'coord'},
+    {id:'f3_t3',text:'<strong>Primer momento formal de redirección al equipo</strong> — situación donde corrige al CM o diseñador con argumento de marca. Identificarlo, documentarlo.',resp:'coord'},
+    {id:'f3_t4',text:'Extracción y <strong>análisis de métricas del período</strong> — engagement, alcance, conversiones, crecimiento y pauta por marca y plataforma',resp:'coord'},
+    {id:'f3_t5',text:'<strong>Redacción del Primer Reporte de Desempeño Estratégico</strong> — no solo qué pasó, sino por qué pasó, qué lo causó y qué cambia el próximo mes. Cada conclusión lleva a una acción.',resp:'coord'},
+    {id:'f3_t6',text:'Revisión semanal semana 7 / semana 8',resp:'all'},
+  ],
+  f3d:[
+    {id:'f3_d1',text:'<strong>Plan Estratégico de Marcas Mes 2</strong> — con evidencia visible de aprendizajes del Mes 1 aplicados',resp:'coord'},
+    {id:'f3_d2',text:'<strong>Primer Reporte de Desempeño Estratégico</strong> — métricas, análisis de causas, piezas destacadas, conclusiones propias y recomendaciones accionables',resp:'coord'},
+    {id:'f3_d3',text:'<strong>Registro de segunda campaña de Paid Media</strong> — brief, resultados, ajustes y análisis propio',resp:'coord'},
+  ],
+  f3l:[
+    {id:'l3_1',text:'<strong>Conducir la evaluación formal del Hito 2 del Auxiliar (día 30 del PULSO)</strong> — retroalimentación estructurada por las 5 responsabilidades del puesto. No solo "va bien" o "va mal": qué hace bien, qué necesita mejorar y cómo.',resp:'coord'},
+    {id:'l3_2',text:'<strong>Primer experimento de cobertura</strong>: delegar su ausencia operativa al Auxiliar por al menos medio día. Evaluar cómo lo manejó y dar retroalimentación directa.',resp:'all'},
+    {id:'l3_3',text:'<strong>Verificación de progreso del PULSO</strong>: ¿el Auxiliar avanza según lo previsto? ¿Su distribución de trabajo operativo-estratégico está funcionando? Si no, ¿qué ajustar?',resp:'coord'},
+  ],
+  h3:[
+    {id:'h3_t1',text:'<strong>Presentación formal del Primer Reporte de Desempeño</strong> a Gerencia — ella lo expone y defiende, no solo lo entrega',resp:'coord'},
+    {id:'h3_t2',text:'Evaluación de <strong>profundidad del reporte</strong> — ¿conecta resultados con decisiones? ¿Sus recomendaciones son accionables?',resp:'mkt'},
+    {id:'h3_t3',text:'Revisión de la <strong>dinámica del equipo bajo su coordinación</strong> — ¿el CM y diseñador operan con claridad de instrucciones?',resp:'all'},
+    {id:'h3_t4',text:'<strong>Decisión de transición a Fase 4</strong>',resp:'all'},
+  ],
+  f4:[
+    {id:'f4_t1',text:'<strong>Plan de Marketing Q+1</strong> — por marca: objetivos, canales, acciones, KPIs proyectados y presupuesto estimado',resp:'coord'},
+    {id:'f4_t2',text:'<strong>Diseño de la Plantilla Estándar de Brief AMG</strong> — formato definitivo basado en lo aprendido estos 60 días',resp:'coord'},
+    {id:'f4_t3',text:'<strong>Plan editorial Mes 3</strong> — operado con autonomía completa',resp:'coord'},
+    {id:'f4_t4',text:'<strong>Tercera campaña de Paid Media</strong> — completamente autónoma',resp:'coord'},
+    {id:'f4_t5',text:'<strong>Documentación del Proceso Operativo Estándar</strong> — el ciclo semanal y mensual que ella define: quién hace qué, quién aprueba qué, en qué tiempos. Incluye la distribución de trabajo con el Auxiliar.',resp:'coord'},
+    {id:'f4_t6',text:'<strong>Presentación del Plan Q+1 a Gerencia</strong> para revisión y aprobación',resp:'all'},
+    {id:'f4_t7',text:'<strong>Evaluación del programa a 90 días con Gerencia</strong> — qué funcionó del proceso de transición, qué fue más difícil, qué viene',resp:'all'},
+    {id:'f4_t8',text:'Revisión semanal semana 9 / semana 10 / semana 11',resp:'all'},
+  ],
+  f4d:[
+    {id:'f4_d1',text:'<strong>Plan de Marketing Q+1</strong> — aprobado por Gerencia de Marketing',resp:'all'},
+    {id:'f4_d2',text:'<strong>Plantilla Estándar de Brief AMG</strong> — formato definitivo validado y listo para uso del equipo',resp:'coord'},
+    {id:'f4_d3',text:'<strong>Proceso Operativo Estándar</strong> — guía del ciclo semanal/mensual, responsables y tiempos, incluyendo distribución de trabajo Coordinadora/Auxiliar',resp:'coord'},
+    {id:'f4_d4',text:'<strong>Autoevaluación 90 días</strong> — logros, aprendizajes más difíciles, retos que siguen y objetivos Q+1',resp:'coord'},
+  ],
+  f4l:[
+    {id:'l4_1',text:'<strong>Conducir la evaluación formal del Hito 3 del Auxiliar (evaluación de 60 días del PULSO)</strong> — retroalimentación por las 5 áreas de responsabilidad, con criterio propio y sin depender de que Gerencia le diga qué decir',resp:'coord'},
+    {id:'l4_2',text:'<strong>Definir metas del Auxiliar para Q+1</strong> — primera vez que define objetivos formales para una persona a su cargo. Deben ser concretas, medibles y alcanzables.',resp:'coord'},
+    {id:'l4_3',text:'<strong>Reflexión de liderazgo</strong>: ¿qué aprendió sobre delegar estos 90 días? ¿Qué fue más difícil de lo esperado? ¿Qué haría diferente si incorporara a una persona nueva desde cero?',resp:'coord'},
+    {id:'l4_4',text:'<strong>Asegurarse de que el Proceso Operativo Estándar</strong> (entregable de Fase 4) incluya cómo se distribuye el trabajo entre Coordinadora y Auxiliar — cuáles son las responsabilidades de cada una y cómo se coordina el equipo',resp:'coord'},
+  ],
+};
+
+const SECTIONS=[
+  {id:'f1',tasks:'f1',deliverables:'f1d',leadership:'f1l'},
+  {id:'h1',tasks:'h1'},
+  {id:'f2',tasks:'f2',deliverables:'f2d',leadership:'f2l'},
+  {id:'h2',tasks:'h2'},
+  {id:'f3',tasks:'f3',deliverables:'f3d',leadership:'f3l'},
+  {id:'h3',tasks:'h3'},
+  {id:'f4',tasks:'f4',deliverables:'f4d',leadership:'f4l'},
+];
+
+const ROLE_LABELS={victor:'Victor',mkt:'Gerente de Marketing',coord:'Coordinadora de Marca'};
+const ROLE_COLORS={victor:'#26283F',mkt:'#6366a0',coord:'#EB4751'};
+const RESP_LABELS={coord:'Coordinadora',mkt:'Mkt',all:'Conjunto',victor:'Victor'};
+const SK='amg_trazo_v3';
+let STATE=loadState();
+let pendingReport=null;
+let selectedRole=null;
+
+function loadState(){try{return JSON.parse(localStorage.getItem(SK))||{tasks:{},reports:{},log:[]};}catch(e){return{tasks:{},reports:{},log:[]};}}
+function saveState(){localStorage.setItem(SK,JSON.stringify(STATE));}
+function selectRole(r){selectedRole=r;document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('role-btn-'+r).classList.add('selected');document.getElementById('modalConfirmBtn').disabled=false;}
+function confirmRole(){if(!selectedRole)return;STATE.role=selectedRole;saveState();document.getElementById('roleModal').classList.add('hidden');applyRole();}
+function openRoleModal(){selectedRole=STATE.role||null;document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('selected'));if(selectedRole){const b=document.getElementById('role-btn-'+selectedRole);if(b)b.classList.add('selected');document.getElementById('modalConfirmBtn').disabled=false;}document.getElementById('roleModal').classList.remove('hidden');}
+function applyRole(){const r=STATE.role||'coord';document.getElementById('hdrRoleDot').style.background=ROLE_COLORS[r];document.getElementById('hdrRoleName').textContent=ROLE_LABELS[r];}
+
+function taskHTML(t,mode){
+  const checked=!!STATE.tasks[t.id];
+  const isLeader=mode==='leader';
+  const isDeliverable=mode==='deliverable';
+  let cls='task-item';
+  if(isLeader)cls+=' leader-task';
+  if(isDeliverable)cls+=' deliverable';
+  if(checked)cls+=' checked';
+  const cbCls='cb'+(isLeader?' leader-cb':'')+(checked?' checked':'');
+  return`<div class="${cls}" id="ti-${t.id}" onclick="toggleTask('${t.id}')">
+    <div class="cb-wrap"><div class="${cbCls}" id="cb-${t.id}"><span class="cb-check">✓</span></div></div>
+    <div class="task-text">${t.text}</div>
+    <span class="task-resp resp-${t.resp}">${RESP_LABELS[t.resp]||t.resp}</span>
+  </div>`;
+}
+
+function renderTasks(){
+  SECTIONS.forEach(s=>{
+    const tArr=TASKS[s.tasks]||[];
+    const dArr=s.deliverables?TASKS[s.deliverables]:[];
+    const lArr=s.leadership?TASKS[s.leadership]:[];
+    const tEl=document.getElementById('tasks-'+s.id);
+    const dEl=document.getElementById('deliverables-'+s.id);
+    const lEl=document.getElementById('leadership-'+s.id);
+    if(tEl)tEl.innerHTML=tArr.map(t=>taskHTML(t,'normal')).join('');
+    if(dEl)dEl.innerHTML=dArr.map(t=>taskHTML(t,'deliverable')).join('');
+    if(lEl)lEl.innerHTML=lArr.map(t=>taskHTML(t,'leader')).join('');
+    const all=[...tArr,...dArr,...lArr];
+    updatePhaseProgress(s.id,all);
+  });
+}
+
+function toggleTask(id){
+  STATE.tasks[id]=!STATE.tasks[id];
+  const el=document.getElementById('ti-'+id);const cb=document.getElementById('cb-'+id);
+  if(STATE.tasks[id]){el.classList.add('checked');cb.classList.add('checked');addLog('task',id,'Tarea completada');}
+  else{el.classList.remove('checked');cb.classList.remove('checked');addLog('untask',id,'Tarea desmarcada');}
+  saveState();
+  SECTIONS.forEach(s=>{
+    const all=[...(TASKS[s.tasks]||[]),...(s.deliverables?TASKS[s.deliverables]:[]),...(s.leadership?TASKS[s.leadership]:[])];
+    updatePhaseProgress(s.id,all);
+  });
+  updateGlobalProgress();
+}
+
+function updatePhaseProgress(sectionId,allTasks){
+  if(!allTasks.length)return;
+  const done=allTasks.filter(t=>STATE.tasks[t.id]).length;
+  const pct=Math.round(done/allTasks.length*100);
+  const fillEl=document.getElementById('fill-'+sectionId);const pctEl=document.getElementById('pct-'+sectionId);
+  if(fillEl)fillEl.style.width=pct+'%';if(pctEl)pctEl.textContent=pct+'%';
+  const btn=document.getElementById('complete-btn-'+sectionId);
+  if(btn){if(pct===100&&!STATE.reports[sectionId])btn.classList.add('visible');else btn.classList.remove('visible');}
+  const badge=document.getElementById('done-badge-'+sectionId);const dtext=document.getElementById('done-text-'+sectionId);
+  if(badge&&STATE.reports[sectionId]){const r=STATE.reports[sectionId];badge.classList.add('visible');if(dtext)dtext.textContent=`Completado el ${r.date} por ${ROLE_LABELS[r.role]||r.role}`;}
+  const tlStat=document.getElementById('tls-'+sectionId);const tlNode=document.getElementById('tln-'+sectionId);
+  if(STATE.reports[sectionId]){if(tlStat){tlStat.textContent='completado';tlStat.className='tl-status done';}if(tlNode)tlNode.style.boxShadow='0 0 0 3px #F98C53';}
+  else if(pct>0){if(tlStat){tlStat.textContent='en progreso';tlStat.className='tl-status active';}}
+}
+
+function updateGlobalProgress(){
+  const all=[];
+  SECTIONS.forEach(s=>{
+    (TASKS[s.tasks]||[]).forEach(t=>all.push(t.id));
+    if(s.deliverables)(TASKS[s.deliverables]||[]).forEach(t=>all.push(t.id));
+    if(s.leadership)(TASKS[s.leadership]||[]).forEach(t=>all.push(t.id));
+  });
+  const done=all.filter(id=>STATE.tasks[id]).length;const pct=Math.round(done/all.length*100);
+  document.getElementById('progressFill').style.width=pct+'%';document.getElementById('progressPct').textContent=pct+'%';
+  document.getElementById('cnt-programa').textContent=done+'/'+all.length;
+}
+
+function openReportModal(sectionId,label){pendingReport={sectionId,label};document.getElementById('reportModalTitle').textContent='Cerrar: '+label;document.getElementById('reportNotes').value='';document.getElementById('reportModal').classList.remove('hidden');}
+function closeReportModal(){document.getElementById('reportModal').classList.add('hidden');pendingReport=null;}
+function confirmReport(){
+  if(!pendingReport)return;const{sectionId,label}=pendingReport;
+  const notes=document.getElementById('reportNotes').value.trim();
+  const date=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
+  const role=STATE.role||'coord';
+  STATE.reports[sectionId]={label,notes,date,role};addLog('report',sectionId,`${label} marcado como completado`);saveState();closeReportModal();
+  const btn=document.getElementById('complete-btn-'+sectionId);if(btn)btn.classList.remove('visible');
+  const badge=document.getElementById('done-badge-'+sectionId);const dtext=document.getElementById('done-text-'+sectionId);
+  if(badge)badge.classList.add('visible');if(dtext)dtext.textContent=`Completado el ${date} por ${ROLE_LABELS[role]||role}`;
+  const tlStat=document.getElementById('tls-'+sectionId);const tlNode=document.getElementById('tln-'+sectionId);
+  if(tlStat){tlStat.textContent='completado';tlStat.className='tl-status done';}if(tlNode)tlNode.style.boxShadow='0 0 0 3px #F98C53';
+  renderReports();document.getElementById('cnt-reportes').textContent=Object.keys(STATE.reports).length;
+}
+
+function renderReports(){
+  const el=document.getElementById('reports-list');const reports=Object.entries(STATE.reports);
+  if(!reports.length){el.innerHTML='<div class="report-card report-card-empty"><div class="icon">📋</div><p>Aún no hay reportes.</p></div>';return;}
+  el.innerHTML=reports.map(([id,r])=>`<div class="report-card"><div class="report-header"><div><div class="report-title">${r.label}</div><div class="report-meta">Completado el ${r.date}</div></div><span class="report-badge badge-${r.role}">${ROLE_LABELS[r.role]||r.role}</span></div>${r.notes?`<div class="report-notes">${r.notes}</div>`:'<div class="report-notes" style="color:var(--g400);font-style:italic">Sin notas adicionales.</div>'}</div>`).join('');
+  document.getElementById('cnt-reportes').textContent=reports.length;
+}
+
+function addLog(type,id,text){
+  const role=STATE.role||'coord';const now=new Date();
+  const time=now.toLocaleDateString('es-MX',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  STATE.log.unshift({type,id,text,role,time});if(STATE.log.length>100)STATE.log=STATE.log.slice(0,100);renderLog();
+}
+function renderLog(){
+  const el=document.getElementById('log-list');
+  if(!STATE.log.length){el.innerHTML='<div class="log-empty">La bitácora está vacía.</div>';return;}
+  el.innerHTML=STATE.log.slice(0,50).map(l=>`<div class="log-item"><div class="log-dot" style="background:${ROLE_COLORS[l.role]||'#ccc'}"></div><div class="log-text">${l.text} <span>— ${ROLE_LABELS[l.role]||l.role} · ${l.time}</span></div></div>`).join('');
+  document.getElementById('cnt-bitacora').textContent=STATE.log.length;
+}
+
+function switchTab(id,btn){document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+function togglePhase(id){document.getElementById('card-'+id).classList.toggle('open');}
+
+function init(){
+  if(!STATE.role){document.getElementById('roleModal').classList.remove('hidden');}
+  else{document.getElementById('roleModal').classList.add('hidden');applyRole();}
+  renderTasks();
+  Object.keys(STATE.tasks).forEach(id=>{if(STATE.tasks[id]){const el=document.getElementById('ti-'+id);const cb=document.getElementById('cb-'+id);if(el)el.classList.add('checked');if(cb)cb.classList.add('checked');}});
+  SECTIONS.forEach(s=>{
+    const all=[...(TASKS[s.tasks]||[]),...(s.deliverables?TASKS[s.deliverables]:[]),...(s.leadership?TASKS[s.leadership]:[])];
+    updatePhaseProgress(s.id,all);
+    if(STATE.reports[s.id]){const btn=document.getElementById('complete-btn-'+s.id);if(btn)btn.classList.remove('visible');}
+  });
+  updateGlobalProgress();renderReports();renderLog();
+  document.getElementById('cnt-reportes').textContent=Object.keys(STATE.reports).length;
+  document.getElementById('cnt-bitacora').textContent=STATE.log.length;
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
